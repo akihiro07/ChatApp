@@ -1,61 +1,60 @@
 <template>
-  <div>
-    <nav
-      class="navbar header has-shadow is-primary"
-      role="navigation"
-      aria-label="main navigation"
-    >
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <img src="~assets/buefy.png" alt="Buefy" height="28" />
-        </a>
-
-        <div class="navbar-burger">
-          <span />
-          <span />
-          <span />
-        </div>
-      </div>
-    </nav>
-
-    <section class="main-content columns">
-      <aside class="column is-2 section">
-        <p class="menu-label is-hidden-touch">
-          General
-        </p>
-        <ul class="menu-list">
-          <li v-for="(item, key) of items" :key="key">
-            <nuxt-link :to="item.to" exact-active-class="is-active">
-              <b-icon :icon="item.icon" /> {{ item.title }}
-            </nuxt-link>
-          </li>
+  <div class="app">
+    <div class="sidebar">
+      <div class="sidebar__container">
+        <h2 class="sidebar__title">ルーム一覧</h2>
+        <ul class="sidebar__contents">
+          <!-- 仮のUI -->
+          <li class="sidebar__item">#room1</li>
+          <li class="sidebar__item">#room2</li>
+          <li class="sidebar__item">#room3</li>
         </ul>
-      </aside>
-
-      <div class="container column is-10">
-        <nuxt />
       </div>
-    </section>
+    </div>
+
+    <nuxt class="container" />
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      items: [
-        {
-          title: 'Home',
-          icon: 'home',
-          to: { name: 'index' }
-        },
-        {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
-        }
-      ]
-    }
+<style lang="scss" scoped>
+$side-bg: #03b361;
+$main-bg: #e8e8e8;
+
+$side-color: #ffffff;
+$main-color: #272727;
+$sub1-color: #03b361;
+$sub2-color: #f98a8a;
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+// sidebar
+.sidebar {
+  background: $side-bg;
+  color: $side-color;
+  width: 30%;
+
+  &__container {
+    margin-top: 1rem;
+    margin-left: 2.2rem;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &__item {
+    letter-spacing: 1px;
   }
 }
-</script>
+
+// container
+.container {
+  background: $main-bg;
+  color: $main-color;
+  width: 100%;
+}
+</style>
