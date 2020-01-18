@@ -4,10 +4,9 @@
       <div class="sidebar__container">
         <h2 class="sidebar__title">ルーム一覧</h2>
         <ul class="sidebar__contents">
-          <!-- 仮のUI -->
-          <li class="sidebar__item">#room1</li>
-          <li class="sidebar__item">#room2</li>
-          <li class="sidebar__item">#room3</li>
+          <li class="sidebar__item" v-for="room in rooms" :key="room.name">
+            <nuxt-link class="sidebar__item--link" :to="`/rooms/${room.id}`">{{ room.name }}</nuxt-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -15,6 +14,29 @@
     <nuxt class="container" />
   </div>
 </template>
+
+<script>
+// firebase
+import { db } from "../plugins/firebase"
+
+export default {
+  data() {
+    return {
+      rooms: []
+    }
+  },
+  mounted() {
+    // room名を取得
+    db.collection('rooms').get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          this.rooms.push({id: doc.id, ...doc.data()})
+        })
+      })
+  }
+}
+</script>
+
 
 <style lang="scss" scoped>
 $side-bg: #03b361;
@@ -44,10 +66,16 @@ $sub2-color: #f98a8a;
   &__title {
     font-size: 20px;
     font-weight: 600;
+    margin-bottom: 3%;
   }
 
   &__item {
     letter-spacing: 1px;
+    margin-bottom: 3%;
+
+    &--link {
+      color: $side-color;
+    }
   }
 }
 
