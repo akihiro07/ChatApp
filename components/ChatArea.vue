@@ -21,12 +21,21 @@ export default {
   mounted() {
     // [参考][パラメータ取得]https://qiita.com/tabtt3/items/cd4405c6ab1a05d3b2c3
     const roomId = this.$route.params.id
-    db.collection("rooms").doc(roomId).collection("messages").get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        this.messages.push({id: doc.id, ...doc.data()})
-      });
-    });
+    db.collection("rooms").doc(roomId).collection("messages")
+      .onSnapshot((snapshot) => {
+        // snapshot.docChanges() => DBの変更点を取得可能（初期は全データを取得）
+        snapshot.docChanges().forEach((change) => {
+          // "added(追加)"したデータのみを判別
+          if(change.type === "added") {
+            this.messages.push({id: change.doc.id, ...change.doc.data()})
+          }
+        })
+      })
+    // .then((querySnapshot) => {
+    //   querySnapshot.forEach((doc) => {
+    //     this.messages.push({id: doc.id, ...doc.data()})
+    //   });
+    // });
   }
 }
 </script>
