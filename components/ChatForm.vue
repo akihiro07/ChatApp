@@ -1,6 +1,7 @@
 <template>
   <div class="form-area">
     <div class="form">
+      <!-- want:enterを押した時にも送信できるoption付けたい -->
       <textarea class="form__textarea" v-model="message"></textarea>
       <button class="form__send" @click="sendMessage">送信</button>
     </div>
@@ -25,6 +26,9 @@ export default {
       .add({
         message: this.message
       })
+        .then(() => {
+          this.message = null
+        })
     }
   }
 }
