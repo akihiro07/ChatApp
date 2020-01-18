@@ -24,7 +24,8 @@ export default {
       // Add a new document with a generated id.
       db.collection("rooms").doc(roomId).collection("messages")
       .add({
-        message: this.message
+        message: this.message,
+        createdAt: new Date().getTime()
       })
         .then(() => {
           this.message = null
