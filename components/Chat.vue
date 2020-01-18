@@ -18,8 +18,7 @@ export default {
       user: {
         id: 1,
         name: "akihiro",
-        thumbnail:
-          "https://pbs.twimg.com/profile_images/1131882065337602049/0JRUGd3S_400x400.jpg"
+        thumbnail: "https://pbs.twimg.com/profile_images/1131882065337602049/0JRUGd3S_400x400.jpg"
       }
     }
   },

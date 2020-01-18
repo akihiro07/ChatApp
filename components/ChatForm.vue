@@ -1,13 +1,15 @@
 <template>
   <div class="form-area">
     <div class="form">
-      <textarea class="form__textarea"></textarea>
-      <button class="form__send" @click="login">送信</button>
+      <textarea class="form__textarea" v-model="message"></textarea>
+      <button class="form__send" @click="sendMessage">送信</button>
     </div>
   </div>
 </template>
 
 <script>
+import { db } from "~/plugins/firebase"
+
 export default {
   data() {
     return {
@@ -15,8 +17,14 @@ export default {
     }
   },
   methods: {
-    login() {
-      alert(this.message)
+    //[参考][firebaseにメッセージ追加]https://firebase.google.com/docs/firestore/manage-data/add-data?hl=ja
+    sendMessage() {
+      const roomId = this.$route.params.id
+      // Add a new document with a generated id.
+      db.collection("rooms").doc(roomId).collection("messages")
+      .add({
+        message: this.message
+      })
     }
   }
 }
