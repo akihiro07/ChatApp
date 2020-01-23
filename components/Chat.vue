@@ -12,7 +12,12 @@
 
 <script>
 export default {
-  props: ["message"]
+  props: ["message"],
+  computed: {
+    displayName() {
+      return `@${this.message.user.name}`
+    }
+  }
 }
 </script>
 

@@ -30,6 +30,15 @@ export default {
     }
   },
   mounted() {
+    // リロード時、ログインユーザー情報取得
+    // [参考1]https://teratail.com/questions/147054
+    // [参考2]https://firebase.google.com/docs/auth/web/manage-users?hl=JA
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user) {
+        // User is signed in.
+        this.setUser(user)
+      }
+    })
     // room名を取得
     db.collection('rooms').get()
       .then((querySnapshot) => {
@@ -49,8 +58,6 @@ export default {
       firebase.auth().signInWithPopup(provider)
         .then((result) => {
           const user = result.user // 元 => {user: obj, credential: obj, additionalUserInfo: obj, etc...}
-          console.log("result:",result)
-          console.log("user:",user)
           this.setUser(user)
         })
         .catch((error) => {
