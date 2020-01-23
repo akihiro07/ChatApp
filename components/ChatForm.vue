@@ -19,17 +19,31 @@ export default {
   },
   methods: {
     //[参考][firebaseにメッセージ追加]https://firebase.google.com/docs/firestore/manage-data/add-data?hl=ja
+    /**
+     * func:sendMessage
+     * detail:firestoreに情報を格納(メッセージ送信) + ChatAreaで使用 
+     */
     sendMessage() {
       const roomId = this.$route.params.id
       // Add a new document with a generated id.
       db.collection("rooms").doc(roomId).collection("messages")
       .add({
         message: this.message,
-        createdAt: new Date().getTime()
+        createdAt: new Date().getTime(),
+        user: {
+          name: this.user.displayName, // this.userはcomputedを表す
+          thumbnail: this.user.photoURL
+        }
       })
         .then(() => {
           this.message = null
         })
+    }
+  },
+  computed: {
+    // method内でも使える！
+    user() {
+      return this.$store.state.user
     }
   }
 }
