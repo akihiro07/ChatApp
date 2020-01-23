@@ -10,8 +10,8 @@
           </li>
         </ul>
       </div>
-      <button class="sidebar__auth sidebar__login" @click="login">ログイン</button>
-      <!-- <button class="sidebar__auth sidebar__logout" v-else>ログアウト</button> -->
+      <button v-if="isAuthenticated" class="sidebar__auth sidebar__logout" @click="logout">ログアウト</button>
+      <button v-else class="sidebar__auth sidebar__login" @click="login">ログイン</button>
     </div>
 
     <nuxt class="container" />
@@ -21,6 +21,7 @@
 <script>
 // firebase
 import { db, firebase } from "../plugins/firebase"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   data() {
@@ -38,13 +39,41 @@ export default {
       })
   },
   methods: {
+    ...mapActions(["setUser"]),
+    /**
+       * func:login
+       * detail:googleログイン処理 + vuex>state>userデータ格納
+       *  */
     login() {
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase.auth().signInWithPopup(provider)
         .then((result) => {
           const user = result.user // 元 => {user: obj, credential: obj, additionalUserInfo: obj, etc...}
+          console.log("result:",result)
+          console.log("user:",user)
+          this.setUser(user)
+        })
+        .catch((error) => {
+          alert(error)
+        })
+    },
+    /**
+       * func:logout
+       * detail:googleログアウト処理 + vuex>state>userデータ削除
+       *  */
+    logout() {
+      firebase.auth().signOut()
+        .then(() => {
+          this.setUser(null) // action->nutation->stateの手順
+          alert("ログアウト成功！")
+        })
+        .catch(() => {
+          alert("ログアウト失敗...")
         })
     }
+  },
+  computed: {
+    ...mapGetters(["isAuthenticated"])
   }
 }
 </script>
