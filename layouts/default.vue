@@ -2,13 +2,16 @@
   <div class="app">
     <div class="sidebar">
       <div class="sidebar__container">
-        <h2 class="sidebar__title">ルーム一覧</h2>
+        <h1 class="sidebar__mainTitle">Chat App</h1>
+        <h2 class="sidebar__subTitle">ルーム一覧</h2>
         <ul class="sidebar__contents">
           <li class="sidebar__item" v-for="room in rooms" :key="room.name">
             <nuxt-link class="sidebar__item--link" :to="`/rooms/${room.id}`">{{ room.name }}</nuxt-link>
           </li>
         </ul>
       </div>
+      <button class="sidebar__auth sidebar__login" @click="login">ログイン</button>
+      <!-- <button class="sidebar__auth sidebar__logout" v-else>ログアウト</button> -->
     </div>
 
     <nuxt class="container" />
@@ -17,7 +20,7 @@
 
 <script>
 // firebase
-import { db } from "../plugins/firebase"
+import { db, firebase } from "../plugins/firebase"
 
 export default {
   data() {
@@ -33,6 +36,15 @@ export default {
           this.rooms.push({id: doc.id, ...doc.data()})
         })
       })
+  },
+  methods: {
+    login() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user // 元 => {user: obj, credential: obj, additionalUserInfo: obj, etc...}
+        })
+    }
   }
 }
 </script>
@@ -56,6 +68,7 @@ $sub2-color: #f98a8a;
 .sidebar {
   background: $side-bg;
   color: $side-color;
+  position: relative;
   width: 30%;
 
   &__container {
@@ -63,7 +76,13 @@ $sub2-color: #f98a8a;
     margin-left: 2.2rem;
   }
 
-  &__title {
+  &__mainTitle {
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 3%;
+  }
+
+  &__subTitle {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 3%;
@@ -76,6 +95,21 @@ $sub2-color: #f98a8a;
     &--link {
       color: $side-color;
     }
+  }
+
+  &__auth {
+    bottom: 3rem;
+    border: none;
+    color: #03b361;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    left: 50%;
+    padding: 5px 15px;
+    position: absolute;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
   }
 }
 

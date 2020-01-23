@@ -18,7 +18,7 @@ export default {
       user: {
         id: 1,
         name: "akihiro",
-        thumbnail: "https://pbs.twimg.com/profile_images/1131882065337602049/0JRUGd3S_400x400.jpg"
+        thumbnail: "https://1.bp.blogspot.com/-4wfcL_kE4hg/XVjgJLRouRI/AAAAAAABUMo/n7wMY5kms9I6BiGxu6a5gIKkPipH7ls4wCLcBGAs/s450/kid_seikaku_kachiki_boy.png"
       }
     }
   },
