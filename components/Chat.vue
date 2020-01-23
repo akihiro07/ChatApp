@@ -4,7 +4,7 @@
       <img :src="message.user.thumbnail" class="content__img" alt="画像" />
     </div>
     <div>
-      <div class="content__user-name">{{ message.user.name }}</div>
+      <div class="content__user-name">{{ displayName }}</div>
       <div class="content__message">{{ message.message }}</div>
     </div>
   </div>

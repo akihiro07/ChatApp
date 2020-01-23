@@ -3,13 +3,22 @@
     <div class="sidebar">
       <div class="sidebar__container">
         <h1 class="sidebar__mainTitle">Chat App</h1>
-        <h2 class="sidebar__subTitle">ルーム一覧</h2>
+        <div class="sidebar__header">
+          <h2 class="sidebar__subTitle">ルーム一覧</h2>
+          <el-button class="sidebar__add-room" @click="dialogVisible = true">&#043;</el-button>
+        </div>
         <ul class="sidebar__contents">
           <li class="sidebar__item" v-for="room in rooms" :key="room.name">
             <nuxt-link class="sidebar__item--link" :to="`/rooms/${room.id}`">{{ room.name }}</nuxt-link>
           </li>
         </ul>
       </div>
+      <el-dialog
+        title="Tips"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <span>This is a message</span>
+      </el-dialog>
       <button v-if="isAuthenticated" class="sidebar__auth sidebar__logout" @click="logout">ログアウト</button>
       <button v-else class="sidebar__auth sidebar__login" @click="login">ログイン</button>
     </div>
@@ -22,10 +31,16 @@
 // firebase
 import { db, firebase } from "../plugins/firebase"
 import { mapGetters, mapActions } from "vuex"
+import Vue from 'vue';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI)
 
 export default {
   data() {
     return {
+      dialogVisible: false,
       rooms: []
     }
   },
@@ -118,10 +133,27 @@ $sub2-color: #f98a8a;
     margin-bottom: 3%;
   }
 
+  &__header {
+    display: flex;
+    margin-bottom: 3%;
+  }
+
   &__subTitle {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 3%;
+  }
+
+  &__add-room {
+    background: $side-color;
+    border: none;
+    border-radius: 50%;
+    color: $sub1-color;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 15px;
+    text-align: center;
+    width: 30px;
   }
 
   &__item {
@@ -147,6 +179,10 @@ $sub2-color: #f98a8a;
     -webkit-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
   }
+}
+
+.el-button {
+  padding: 0;
 }
 
 // container
