@@ -1,101 +1,19 @@
 <template>
   <div class="app">
-    <div class="sidebar">
-      <div class="sidebar__container">
-        <h1 class="sidebar__mainTitle">Chat App</h1>
-        <div class="sidebar__header">
-          <h2 class="sidebar__subTitle">ルーム一覧</h2>
-          <el-button class="sidebar__add-room" @click="dialogVisible = true">&#043;</el-button>
-        </div>
-        <ul class="sidebar__contents">
-          <li class="sidebar__item" v-for="room in rooms" :key="room.name">
-            <nuxt-link class="sidebar__item--link" :to="`/rooms/${room.id}`">{{ room.name }}</nuxt-link>
-          </li>
-        </ul>
-      </div>
-      <el-dialog
-        title="Tips"
-        :visible.sync="dialogVisible"
-        width="30%">
-        <span>This is a message</span>
-      </el-dialog>
-      <button v-if="isAuthenticated" class="sidebar__auth sidebar__logout" @click="logout">ログアウト</button>
-      <button v-else class="sidebar__auth sidebar__login" @click="login">ログイン</button>
-    </div>
+    <!-- component -->
+    <side-bar />
+    <!-- component end -->
 
     <nuxt class="container" />
   </div>
 </template>
 
 <script>
-// firebase
-import { db, firebase } from "../plugins/firebase"
-import { mapGetters, mapActions } from "vuex"
-import Vue from 'vue';
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-
-Vue.use(ElementUI)
+import SideBar from "~/components/SideBar"
 
 export default {
-  data() {
-    return {
-      dialogVisible: false,
-      rooms: []
-    }
-  },
-  mounted() {
-    // リロード時、ログインユーザー情報取得
-    // [参考1]https://teratail.com/questions/147054
-    // [参考2]https://firebase.google.com/docs/auth/web/manage-users?hl=JA
-    firebase.auth().onAuthStateChanged((user) => {
-      if(user) {
-        // User is signed in.
-        this.setUser(user)
-      }
-    })
-    // room名を取得
-    db.collection('rooms').get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          this.rooms.push({id: doc.id, ...doc.data()})
-        })
-      })
-  },
-  methods: {
-    ...mapActions(["setUser"]),
-    /**
-       * func:login
-       * detail:googleログイン処理 + vuex>state>userデータ格納
-       *  */
-    login() {
-      const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-          const user = result.user // 元 => {user: obj, credential: obj, additionalUserInfo: obj, etc...}
-          this.setUser(user)
-        })
-        .catch((error) => {
-          alert(error)
-        })
-    },
-    /**
-       * func:logout
-       * detail:googleログアウト処理 + vuex>state>userデータ削除
-       *  */
-    logout() {
-      firebase.auth().signOut()
-        .then(() => {
-          this.setUser(null) // action->nutation->stateの手順
-          alert("ログアウト成功！")
-        })
-        .catch(() => {
-          alert("ログアウト失敗...")
-        })
-    }
-  },
-  computed: {
-    ...mapGetters(["isAuthenticated"])
+  components: {
+    SideBar
   }
 }
 </script>
@@ -115,6 +33,7 @@ $sub2-color: #f98a8a;
   height: 100vh;
 }
 
+// ===== component =====
 // sidebar
 .sidebar {
   background: $side-bg;
@@ -184,6 +103,7 @@ $sub2-color: #f98a8a;
 .el-button {
   padding: 0;
 }
+// ===== component end =====
 
 // container
 .container {
