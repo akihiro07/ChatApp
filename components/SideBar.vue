@@ -6,9 +6,9 @@
           <h2 class="sidebar__subTitle">ルーム一覧</h2>
           <el-button class="sidebar__add-room" @click="dialogVisible = true">&#043;</el-button>
           <el-dialog title="新規ルーム追加" :visible.sync="dialogVisible" width="40%">
-            <div>
-              <input type="text" v-model="roomName">
-              <button @click="createRoom">追加</button>
+            <div class="add-room">
+              <input class="add-room__input" type="text" v-model="roomName">
+              <button class="add-room__button" @click="createRoom">追加</button>
             </div>
           </el-dialog>
         </div>
@@ -119,6 +119,19 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.el-dialog__header {
+    display: flex;
+    justify-content: center;
+}
+
+.el-dialog__title {
+  font-size: 1.375rem;
+  font-weight: 600;
+}
+</style>
+
+
 <style lang="scss" scoped>
 $side-bg: #03b361;
 $main-bg: #e8e8e8;
@@ -193,8 +206,32 @@ $sub2-color: #f98a8a;
   }
 }
 
+// el-dialog
 .el-button {
   padding: 0;
+}
+
+.add-room {
+  align-items: baseline;
+  display: flex;
+  justify-content: center;
+
+  &__input {
+    font-size: 1rem;
+    height: 100%;
+    margin-right: 1.5rem;
+    padding: 10px;
+    width: 60%;
+  }
+
+  &__button {
+    border: none;
+    border-radius: 25px;
+    background: #03b361;
+    color: #ffffff;
+    font-size: 1.125rem;
+    padding: 3px 15px;
+  }
 }
 </style>
 

@@ -57,12 +57,12 @@ export default {
 .form {
   align-items: flex-end;
   display: flex;
-  font-size: 16px;
+  font-size: 1rem;
   height: 80%;
   justify-content: end;
 
   &__textarea {
-    font-size: 16px;
+    font-size: 1rem;
     height: 100%;
     margin-right: 1.5rem;
     padding: 10px;
@@ -76,7 +76,7 @@ export default {
     box-sizing: border-box;
     border-radius: 25px;
     color: #ffffff;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     padding: 5px 25px;
   }
