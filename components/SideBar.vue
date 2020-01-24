@@ -4,40 +4,53 @@
         <h1 class="sidebar__mainTitle">Chat App</h1>
         <div class="sidebar__header">
           <h2 class="sidebar__subTitle">ルーム一覧</h2>
-          <el-button class="sidebar__add-room" @click="dialogVisible = true">&#043;</el-button>
-          <el-dialog title="新規ルーム追加" :visible.sync="dialogVisible" width="40%">
-            <div class="add-room">
-              <input class="add-room__input" type="text" v-model="roomName">
-              <button class="add-room__button" @click="createRoom">追加</button>
-            </div>
-          </el-dialog>
+          <add-new-room />
         </div>
         <ul class="sidebar__contents">
           <li class="sidebar__item" v-for="room in rooms" :key="room.name">
             <nuxt-link class="sidebar__item--link" :to="`/rooms/${room.id}`">{{ room.name }}</nuxt-link>
+            <el-button class="sidebar__item--icon" @click="isOpenDialog(room)">
+              <i class="el-icon-delete-solid"></i>
+            </el-button>
           </li>
         </ul>
       </div>
       <button v-if="isAuthenticated" class="sidebar__auth sidebar__logout" @click="logout">ログアウト</button>
       <button v-else class="sidebar__auth sidebar__login" @click="login">ログイン</button>
+
+      <!-- ダイアログ表示 -->
+      <el-dialog title="ルーム削除" :visible.sync="openDialog" width="30%">
+        <span>『{{roomName}}』内のトーク履歴が全て削除されてしまいます。<br>本当に削除してよろしいですか？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="openDialog = false">いいえ</el-button>
+          <el-button type="primary" @click="deleteRoom(roomId)">はい</el-button>
+        </span>
+      </el-dialog>
+      <!-- ダイアログ表示 end -->
     </div>
 </template>
 
 <script>
+import AddNewRoom from "~/components/SideBar/AddNewRoom"
 import { db, firebase } from "../plugins/firebase"
 import { mapGetters, mapActions } from "vuex"
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import { debuglog } from 'util';
 
 Vue.use(ElementUI)
 
 export default {
+  components: {
+    AddNewRoom
+  },
   data() {
     return {
-      dialogVisible: false,
       rooms: [],
-      roomName: null
+      roomName: null,
+      roomId: null,
+      openDialog: false
     }
   },
   mounted() {
@@ -55,9 +68,11 @@ export default {
     // [参考]https://firebase.google.com/docs/firestore/query-data/listen?hl=ja#events-local-changes
     .onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
+        const doc = change.doc
         if(change.type === "added") {
-          const doc = change.doc
           this.rooms.push({id: doc.id, ...doc.data()})
+        } else if(change.type === "removed") {
+          this.rooms.splice(change.oldIndex, 1)
         }
       })
     })
@@ -65,23 +80,28 @@ export default {
   methods: {
     ...mapActions(["setUser"]),
     /**
-     * func:createRoom
-     * detail:新しいルームを追加
+     * func:isOpenDialog
+     * detail:room削除確認のモーダル表示 + el-buttonから各ルーム情報をdataに格納
      */
-    createRoom() {
-      console.log(this.roomName)
-      db.collection('rooms')
-      .add({
-        name: this.roomName,
-        createdAt: new Date().getTime()
+    isOpenDialog(room) {
+      // TODO:"this.rooData = room"でroom objectを格納するとエラーが出る
+      this.roomName = room.name
+      this.roomId = room.id
+      this.openDialog = true
+    },
+    /**
+     * func:deleteRoom
+     * detail:room削除
+     */
+    deleteRoom(roomId) {
+      db.collection("rooms").doc(roomId).delete()
+      .then(() => {
+        this.roomName = null
+        this.roomId = null
+        this.openDialog = false
+      }).catch((error) => {
+        alert(error)
       })
-        .then(() => {
-          this.roomName = null
-          this.dialogVisible =false
-        })
-        .catch(error => {
-          alert(error)
-        })
     },
     /**
        * func:login
@@ -149,7 +169,8 @@ $sub2-color: #f98a8a;
 
   &__container {
     margin-top: 1rem;
-    margin-left: 2.2rem;
+    margin-left: 1.2rem;
+    margin-right: 1.2rem;
   }
 
   &__mainTitle {
@@ -168,25 +189,25 @@ $sub2-color: #f98a8a;
     font-weight: 600;
   }
 
-  &__add-room {
-    background: $side-color;
-    border: none;
-    border-radius: 50%;
-    color: $sub1-color;
-    font-size: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-left: 15px;
-    text-align: center;
-    width: 30px;
-  }
-
   &__item {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
     letter-spacing: 1px;
-    margin-bottom: 3%;
+    margin-bottom: 4%;
+
+    &:hover {
+      background: #108951;
+    }
 
     &--link {
       color: $side-color;
+    }
+
+    &--icon {
+    color: #03b361;
+    font-size: 1rem;
+    padding: 3px;
     }
   }
 
@@ -203,34 +224,6 @@ $sub2-color: #f98a8a;
     transform: translateX(-50%);
     -webkit-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
-  }
-}
-
-// el-dialog
-.el-button {
-  padding: 0;
-}
-
-.add-room {
-  align-items: baseline;
-  display: flex;
-  justify-content: center;
-
-  &__input {
-    font-size: 1rem;
-    height: 100%;
-    margin-right: 1.5rem;
-    padding: 10px;
-    width: 60%;
-  }
-
-  &__button {
-    border: none;
-    border-radius: 25px;
-    background: #03b361;
-    color: #ffffff;
-    font-size: 1.125rem;
-    padding: 3px 15px;
   }
 }
 </style>

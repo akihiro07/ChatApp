@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Chat from "./Chat"
+import Chat from "./ChatArea/Chat"
 import { db } from "~/plugins/firebase"
 
 export default {
